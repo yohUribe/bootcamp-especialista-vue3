@@ -1,6 +1,18 @@
-# .
+# bootcamp-especialista-vue3
 
 This template should help get you started developing with Vue 3 in Vite.
+
+## Challenge - CRUD de empresas
+
+**Requerimientos**
+
+    **Nota: no necesitamos que la data persista ni necesitamos tener una conexion a una API o BD**
+
+* [X] Necesitamos crear una lista de empresas en u arreglo con datos básicos (nombre, cargo).
+* [X] Listar las empresas y mostrar su nombre y cargo.
+* [X] Crear un formulario que permita crear una nueva empresa.
+* [X] Crear un formulario que permita actualizar una empresa.
+* [X] Crear un botón que permita eliminar una empresa.
 
 ## Recommended IDE Setup
 
@@ -26,4 +38,10 @@ npm run dev
 
 ```sh
 npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
 ```
