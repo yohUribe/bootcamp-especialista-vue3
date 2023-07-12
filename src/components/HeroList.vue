@@ -5,16 +5,32 @@ import IconsGenderNone from "@/components/icons/IconsGenderNone.vue";
 import IconsGenderMale from "@/components/icons/IconsGenderMale.vue";
 import IconsGenderFame from "@/components/icons/IconsGenderFame.vue";
 
-const page = ref(1)
-const limit = ref(5)
-const count = ref(100)
+import Modal from "@/components/Modal.vue";
 
-defineProps({
+const isOpen = ref(false)
+const heroSelected = ref({
+  id: '',
+  image_screen_large_url: '',
+  name: '',
+  real_name: '',
+  aliases: '',
+  birth: '',
+  gender: ''
+})
+
+const props = defineProps({
   heroes: {
     type: Array,
     required: true
+  },
+  count: {
+    type: Number,
+    required: true
   }
 })
+
+const page = ref(1)
+const limit = ref(5)
 
 const emit = defineEmits(['onPage'])
 
@@ -23,29 +39,35 @@ const firstPage = () => {
 
   emit('onPage', page.value)
 }
-
 const nextPage = () => {
-  page.value = page.value + 1
 
-  if(page.value >= (count.value / limit.value)) return
+  if(page.value >= (props.count / limit.value)) return
+
+  page.value = page.value + 1
 
   emit('onPage', page.value)
 }
 const previousPage = () => {
-  page.value = page.value - 1
-
   if(page.value === 1) return
+
+  page.value = page.value - 1
 
   emit('onPage', page.value)
 }
 const lastPage = () => {
-  page.value = count.value / limit.value
+  if(page.value === (props.count / limit.value)) return
 
-  if(page.value === (count.value / limit.value)) return
+  page.value = props.count / limit.value
 
   emit('onPage', page.value)
 }
-
+const handleIsOpen = (value) => {
+  isOpen.value = value
+}
+const onOpenModal = (hero) => {
+  isOpen.value = true
+  heroSelected.value = hero
+}
 </script>
 
 <template>
@@ -61,7 +83,7 @@ const lastPage = () => {
     <tbody>
     <tr v-for="hero in heroes" :key="hero.id">
       <th>{{hero.id}}</th>
-      <td><img :src="hero.image_screen_large_url" alt="" width="156" height="88"></td>
+      <td @click="onOpenModal(hero)"><img :src="hero.image_screen_large_url" alt="" width="156" height="88"></td>
       <td>
         <div>{{hero.name}}</div>
         <div>Real name: {{hero.real_name}}</div>
@@ -77,13 +99,15 @@ const lastPage = () => {
     </tbody>
   </table>
 
-  <div class="pagination">
+  <div class="grid">
     <button @click="firstPage">First</button>
     <button @click="previousPage">Previous</button>
-    <div>{{ page }} of {{ count / limit }}</div>
+    <span>{{ page }} of {{ Math.round(count / limit) }}</span>
     <button @click="nextPage">Next</button>
     <button @click="lastPage">Last</button>
   </div>
+
+  <Modal :hero="heroSelected" :isOpen="isOpen" @onIsOpen="handleIsOpen"></Modal>
 </template>
 
 <style scoped>
@@ -97,8 +121,11 @@ const lastPage = () => {
 .gender--none {
   fill: #fa8960;
 }
-.pagination {
-  display: flex;
-  gap:1rem;
+
+.grid span {
+  margin-bottom: 19px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
 }
 </style>
