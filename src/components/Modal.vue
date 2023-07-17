@@ -22,7 +22,8 @@ const onClose = () => {
     <article>
       <h3>{{hero.name}}</h3>
       <p>
-        <img :src="hero.image_screen_large_url" alt="">
+        <slot></slot>
+<!--        <img :src="hero.image_screen_large_url" alt="">-->
       </p>
       <footer>
         <a href="#cancel" role="button" class="secondary" @click="onClose">Cerrar</a>

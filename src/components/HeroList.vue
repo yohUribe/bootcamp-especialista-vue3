@@ -7,6 +7,8 @@ import IconsGenderFame from "@/components/icons/IconsGenderFame.vue";
 
 import Modal from "@/components/Modal.vue";
 
+import {deleteHeroe} from "@/services/heroes";
+
 const isOpen = ref(false)
 const heroSelected = ref({
   id: '',
@@ -41,7 +43,7 @@ const firstPage = () => {
 }
 const nextPage = () => {
 
-  if(page.value >= (props.count / limit.value)) return
+  if(page.value >= Math.ceil(props.count / limit.value)) return
 
   page.value = page.value + 1
 
@@ -55,9 +57,9 @@ const previousPage = () => {
   emit('onPage', page.value)
 }
 const lastPage = () => {
-  if(page.value === (props.count / limit.value)) return
+  if(page.value === Math.ceil(props.count / limit.value)) return
 
-  page.value = props.count / limit.value
+  page.value = Math.ceil(props.count / limit.value)
 
   emit('onPage', page.value)
 }
@@ -67,6 +69,9 @@ const handleIsOpen = (value) => {
 const onOpenModal = (hero) => {
   isOpen.value = true
   heroSelected.value = hero
+}
+const handleRemoveHero = async(hero) => {
+  const res =  await deleteHeroe({id: hero.id})
 }
 </script>
 
@@ -78,6 +83,7 @@ const onOpenModal = (hero) => {
       <th>Image</th>
       <th>Name</th>
       <th>Gender</th>
+      <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -95,6 +101,9 @@ const onOpenModal = (hero) => {
         <icons-gender-fame v-else-if="hero.gender === 2" class="gender--fame"/>
         <icons-gender-none v-else class="gender--none"/>
       </td>
+      <td>
+        <button role="button" @click="handleRemoveHero(hero)">❌</button>
+      </td>
     </tr>
     </tbody>
   </table>
@@ -102,12 +111,14 @@ const onOpenModal = (hero) => {
   <div class="grid">
     <button @click="firstPage">First</button>
     <button @click="previousPage">Previous</button>
-    <span>{{ page }} of {{ Math.round(count / limit) }}</span>
+    <span>{{ page > Math.ceil(count / limit) ? page = 1 : page }} of {{ Math.ceil(count / limit) }}</span>
     <button @click="nextPage">Next</button>
     <button @click="lastPage">Last</button>
   </div>
 
-  <Modal :hero="heroSelected" :isOpen="isOpen" @onIsOpen="handleIsOpen"></Modal>
+  <Modal :hero="heroSelected" :isOpen="isOpen" @onIsOpen="handleIsOpen">
+    <img :src="heroSelected.image_screen_large_url" alt="">
+  </Modal>
 </template>
 
 <style scoped>
