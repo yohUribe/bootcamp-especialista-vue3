@@ -1,54 +1,142 @@
 <script setup>
-import {ref} from "vue";
-import {createHeroe} from "@/services/heroes";
+import { ref, watch } from 'vue'
+import { createHero, updateHero } from '@/services/heroes'
+
+import { createToaster } from "@meforma/vue-toaster"
+
+const toaster = createToaster()
+
+const props = defineProps({
+  hero: {
+    type: Object,
+    default: {}
+  }
+})
+
+const emit = defineEmits(['onRefreshAfterUpdate'])
+
+watch(() => props.hero, (newHero, oldHero) => {
+  console.log(newHero, oldHero)
+
+  formData.value = {
+    id: newHero.id,
+    name: newHero.name,
+    realName: newHero.real_name,
+    gender: newHero.gender,
+    birth: newHero.birth,
+  }
+})
 
 const formData = ref({
+  id: '',
+
   name: '',
-  real_name:'',
-  gender:'',
-  birth:'',
+  realName: '',
+  gender: '',
+  birth: '',
+
   aliases: 'aliases',
-  deck: 'deck',
-  image_screen_url: 'image_screen_url',
-  image_screen_large_url: 'image_screen_large_url'
+  deck: 'deck description',
+  image_screen_large_url: 'url_large',
+  image_screen_url: 'url'
 })
 
 const handleForm = async (event) => {
-  const newHero = {...formData.value}
-  newHero.gender = Number(newHero.gender)
+  // TODO: Limpiar el formulario después de crear o actualizar
+  // TODO: Actualizar la lista de heroes después de actualizar y permanecer en la misma página
 
-  const res = await createHeroe({form: newHero})
+  try {
+
+    const newHero = formData.value
+
+    newHero.gender = Number(newHero.gender)
+
+    newHero['real_name'] = newHero.realName
+
+    delete newHero.realName
+
+    const isANewHero = !Boolean(newHero.id)
+
+    console.log(isANewHero, newHero.id)
+
+    if (isANewHero) {
+      const res = await createHero({ form: newHero })
+
+      if (res) {
+        toaster.success(`Se creó el heroe correctamente`);
+      }
+    } else {
+      console.log('Updating...')
+
+      const res = await updateHero({ form: newHero })
+
+      if (res) {
+        toaster.success(`Se actualizó el heroe correctamente`);
+      }
+
+      emit('onRefreshAfterUpdate')
+    }
+
+    formData.value = {
+      id: '',
+
+      name: '',
+      realName: '',
+      gender: '',
+      birth: '',
+
+      aliases: 'aliases',
+      deck: 'deck description',
+      image_screen_large_url: 'url_large',
+      image_screen_url: 'url'
+    }
+
+    // DONE: Validar la respuesta y mostrar un mensaje de exito o de error
+  } catch (error) {
+    console.log(error)
+
+    toaster.error(`Hubo un error, intentalo denuevo más tarde`);
+  }
 }
-
 </script>
 
 <template>
+  <!-- TODO: Hacer que los componentes del formulario y cualquier parte de la app (input, select, buttons) sean reutilizables usando @input, $attrs. Tal como está en los videos del Canvas. Ejemplo: <BaseInput />, <BaseSelect />, <BaseButton />, etc -->
   <h2>New Hero</h2>
   <form @submit.prevent="handleForm">
     <label for="">
       Name
-      <input type="text" placeholder="Ex. Spiderman" required v-model="formData.name">
+      <input
+          type="text"
+          placeholder="Ex. Spiderman"
+          required
+          v-model="formData.name"
+      />
     </label>
     <label for="">
       Real Name
-      <input type="text" placeholder="Ex. Peter Parker" required v-model="formData.real_name">
+      <input
+          type="text"
+          placeholder="Ex. Spiderman"
+          required
+          v-model="formData.realName"
+      />
     </label>
     <label for="">
       Gender
       <select v-model="formData.gender">
+        <option value="">Select a gender...</option>
         <option value="1">Male</option>
         <option value="2">Female</option>
         <option value="0">Other</option>
       </select>
     </label>
-    <label for="">
-      Bith
-      <input type="date" placeholder="Ex. Peter Parker" required v-model="formData.birth">
+    <label>
+      Birth
+      <input type="date" v-model="formData.birth" />
     </label>
     <button type="submit">Save</button>
+
+    <pre>{{ hero }}</pre>
   </form>
 </template>
-
-<style scoped>
-
-</style>

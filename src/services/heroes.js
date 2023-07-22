@@ -1,34 +1,62 @@
 const BASE_URL = import.meta.env.VITE_API_URL
-export const fetchHeroesLength = async ({ gender} = { gender: '' }) =>{
-    const response = await fetch(`${BASE_URL}/heroes?gender=${gender}&completed=false`)
-    const total =  await response.json()
-    return total.length
+
+export const fetchHeroes = async (
+    { page, limit, name, gender } = { page: 1, limit: 4, name: '', gender: '' }
+) => {
+
+    const params = `page=${page}&limit=${limit}&name=${name}&gender=${gender}`
+
+    const url = `${BASE_URL}/heroes?${params}`
+
+    const response = await fetch(url)
+
+    const data = await response.json()
+
+    return data
 }
-export const fetchHeroes = async ({ gender} = { gender: '' }) =>{
-    const response = await fetch(`${BASE_URL}/heroes?gender=${gender}&completed=false`)
-    const total =  await response.json()
-    return total
-}
-export const fetchHeroesSearch = async ({ page, limit, gender} = { page: 1, limit: 5, gender: ''}) =>{
-    const response = await fetch(`${BASE_URL}/heroes?gender=${gender}&page=${page}&limit=${limit}&completed=false`)
-    return await response.json()
-}
-export const createHeroe = async ({form}) =>{
+
+export const createHero = async ({ form }) => {
     const options = {
         method: 'POST',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type': 'application/json'
         },
         body: JSON.stringify(form)
     }
+
     const response = await fetch(`${BASE_URL}/heroes`, options)
-    return  await response.json()
+
+    const data = await response.json()
+
+    return data
 }
-export const deleteHeroe = async ({id}) =>{
+
+export const updateHero = async ({ form }) => {
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(form)
+    }
+
+    const id = form.id
+
+    const response = await fetch(`${BASE_URL}/heroes/${id}`, options)
+
+    const data = await response.json()
+
+    return data
+}
+
+export const deleteHero =  async ({ id }) => {
     const options = {
         method: 'DELETE'
     }
+
     const response = await fetch(`${BASE_URL}/heroes/${id}`, options)
 
-    return  await response.json()
+    const data = await response.json()
+
+    return data
 }
