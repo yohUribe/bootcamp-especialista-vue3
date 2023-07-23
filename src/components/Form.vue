@@ -41,6 +41,12 @@ const formData = ref({
   image_screen_url: 'url'
 })
 
+const genderOptions = ref([
+  {value:"1", label:"Male"},
+  {value:"2", label:"Female"},
+  {value:"0", label:"Other"},
+])
+
 const handleForm = async (event) => {
   // TODO: Limpiar el formulario después de crear o actualizar
   // TODO: Actualizar la lista de heroes después de actualizar y permanecer en la misma página
@@ -104,38 +110,26 @@ const handleForm = async (event) => {
   <!-- TODO: Hacer que los componentes del formulario y cualquier parte de la app (input, select, buttons) sean reutilizables usando @input, $attrs. Tal como está en los videos del Canvas. Ejemplo: <BaseInput />, <BaseSelect />, <BaseButton />, etc -->
   <h2>New Hero</h2>
   <form @submit.prevent="handleForm">
-    <label for="">
-      Name
-      <input
-          type="text"
-          placeholder="Ex. Spiderman"
-          required
-          v-model="formData.name"
-      />
-    </label>
-    <label for="">
-      Real Name
-      <input
-          type="text"
-          placeholder="Ex. Spiderman"
-          required
-          v-model="formData.realName"
-      />
-    </label>
-    <label for="">
-      Gender
-      <select v-model="formData.gender">
-        <option value="">Select a gender...</option>
-        <option value="1">Male</option>
-        <option value="2">Female</option>
-        <option value="0">Other</option>
-      </select>
-    </label>
-    <label>
-      Birth
-      <input type="date" v-model="formData.birth" />
-    </label>
-    <button type="submit">Save</button>
+    <BaseInput
+        label="Name"
+        placeholder="Ex. Spiderman"
+        required
+        v-model="formData.name"/>
+
+    <BaseInput
+        label="Real Name"
+        placeholder="Ex. Spiderman"
+        required
+        v-model="formData.realName"/>
+
+    <BaseSelect label="Gender" :options="genderOptions" v-model="formData.gender"/>
+
+    <BaseInput
+        label="Birth"
+        type="date"
+        v-model="formData.birth"/>
+
+    <BaseButton type="submit" label="Save"/>
 
     <pre>{{ hero }}</pre>
   </form>

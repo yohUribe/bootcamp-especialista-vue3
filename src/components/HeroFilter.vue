@@ -1,29 +1,32 @@
 <script setup>
 import { ref } from 'vue'
+import BaseInput from "@/components/shared/BaseInput.vue";
+import BaseSelect from "@/components/shared/BaseSelect.vue";
 
 const query = ref('')
 const filterByGender = ref('')
 
 const emit = defineEmits(['onSearch', 'onFilter'])
+
+const genderOptions = ref([
+  {value:"1", label:"Male"},
+  {value:"2", label:"Female"},
+  {value:"0", label:"Other"},
+])
+
+
 </script>
 
 <template>
   <div class="grid">
     <div>
-      <input
-          type="text"
+      <BaseInput
           placeholder="Search by name"
           v-model="query"
-          @keyup="emit('onSearch', query)"
-      />
+          @keyup="emit('onSearch', query)"/>
     </div>
     <div>
-      <select v-model="filterByGender" @change="emit('onFilter', filterByGender)">
-        <option value="" selected>Select a gender…</option>
-        <option value="1">Male</option>
-        <option value="2">Female</option>
-        <option value="0">Other</option>
-      </select>
+      <BaseSelect @change="emit('onFilter', $event.target.value)" :options="genderOptions" v-model="filterByGender"/>
     </div>
   </div>
 </template>
