@@ -1,5 +1,14 @@
 <script setup>
-import {RouterLink} from 'vue-router'
+import {RouterLink, useRouter} from 'vue-router'
+import {isAuthenticated} from "@/utils/auth";
+
+
+const router = useRouter()
+const handleLogout = () => {
+  localStorage.removeItem('auth')
+
+  router.push({name: 'login'})
+}
 </script>
 
 <template>
@@ -10,25 +19,25 @@ import {RouterLink} from 'vue-router'
       </li>
     </ul>
     <ul>
-      <li>
+      <li v-if="isAuthenticated()">
         <RouterLink to="/">
           Home
         </RouterLink>
       </li>
-      <li>
+      <li v-if="!isAuthenticated()">
         <RouterLink to="login">
         Login
         </RouterLink>
       </li>
-      <li>
+      <li v-if="!isAuthenticated()">
         <RouterLink to="register">
           Register
         </RouterLink>
       </li>
-      <li>
-        <RouterLink to="login">
+      <li v-if="isAuthenticated()">
+        <button @click="handleLogout">
           Logout
-        </RouterLink>
+        </button>
       </li>
     </ul>
   </nav>

@@ -18,6 +18,14 @@ export const fetchHeroes = async (
     return data
 }
 
+export const getHeroes = async (id) => {
+    const url = `${BASE_URL}/heroes/${id}`
+
+    const response = await fetch(url)
+
+    return await response.json()
+}
+
 export const createHero = async ({ form }) => {
     const options = {
         method: 'POST',

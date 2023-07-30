@@ -95,7 +95,8 @@ const handleUpdateHero = async (hero) => {
         <IconGenderFemale  v-else-if="hero.gender === 2" class="gender--female" />
         <span v-else>-</span>
       </th>
-      <th>
+      <th class="actions">
+        <router-link :to="{ name: 'heroes-detail', params: {id: hero.id}}">Detail</router-link>
         <button role="button" @click="handleRemoveHero(hero)">❌</button>
         <button role="button" @click="handleUpdateHero(hero)">✏</button>
       </th>
@@ -110,3 +111,10 @@ const handleUpdateHero = async (hero) => {
     <img :src="selectedHero?.image_screen_large_url" />
   </ModalBase>
 </template>
+<style scoped>
+.actions {
+  display: flex;
+  align-items: start;
+  grap: .5rem;
+}
+</style>
